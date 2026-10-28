@@ -1,0 +1,55 @@
+# Build artifacts
+/target/
+/.scrapling/
+*.exe
+*.dll
+*.pdb
+*.res
+*.tmp
+*.log
+__pycache__/
+*.py[cod]
+
+# Private application state, exports, credentials and keys
+/contacts*
+/settings*.json
+/profiles*.json
+!/profiles.example.json
+/mailboxes*.json
+/suppression*.json
+/collection-*.json
+/*.csv
+/*.vcf
+/*.eml
+*.pem
+*.key
+*.p12
+*.pfx
+.env
+.env.*
+!.env.example
+*.bak
+temp_*
+
+# Local evidence, backups, automation and separate upstream checkout
+/output/
+/backups/
+/logs/
+/scratch/
+/parser_2gis_new_repo/
+/start_daemons.bat
+/control_panel.bat
+/examples/live_office_check.rs
+/tools/*
+!/tools/verify_business_collection.py
+!/tools/scrapling_fetch.py
+!/tools/setup_scrapling.ps1
+!/tools/test_scrapling_fetch.py
+
+# Local agent/editor state
+/.agents/
+/.system_generated/
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db

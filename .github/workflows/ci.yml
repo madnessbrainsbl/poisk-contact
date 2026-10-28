@@ -1,0 +1,27 @@
+name: Windows checks
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install stable Rust toolchain
+        run: rustup show active-toolchain
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Run tests and compile all targets
+        run: cargo test --locked --all-targets
+      - name: Check documentation examples
+        run: cargo test --locked --doc
+      - name: Check the optional Python bridge without a browser
+        run: python tools/test_scrapling_fetch.py ScraplingBridgeTest.test_detects_javascript_shell

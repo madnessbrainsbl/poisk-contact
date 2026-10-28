@@ -1,0 +1,25 @@
+[package]
+name = "poisk_contact"
+version = "0.1.0"
+edition = "2024"
+default-run = "poisk_contact"
+description = "Native Windows application for public business contact research and outreach"
+readme = "README.md"
+repository = "https://github.com/madnessbrainsbl/poisk-contact"
+keywords = ["contact-discovery", "business-research", "osint", "egui", "windows"]
+publish = false
+
+[profile.release]
+strip = "symbols"
+
+[dependencies]
+chrono = "0.4.45"
+eframe = { version = "0.36.2", default-features = false, features = ["default_fonts", "glow", "links"] }
+lettre = { version = "0.11.23", default-features = false, features = ["builder", "smtp-transport", "rustls-tls", "tokio1", "tokio1-rustls-tls"] }
+regex = "1.13.1"
+reqwest = { version = "0.13.5", default-features = false, features = ["json", "gzip", "rustls"] }
+rfd = "0.17.2"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tokio = { version = "1.53.2", features = ["full"] }
+url = "2.5.8"

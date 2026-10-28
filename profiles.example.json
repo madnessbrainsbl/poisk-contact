@@ -1,0 +1,22 @@
+{
+  "personas": {
+    "creative": {
+      "sender_name": "",
+      "email": "",
+      "outreach_template": {
+        "template_name": "Creative collaboration",
+        "subject": "Visual content for {company}",
+        "body": "Hi {name},\n\nI would like to discuss visual content for {company}. Would a short introduction be useful?\n\nBest regards,\n{sender_name}"
+      }
+    },
+    "cybersec": {
+      "sender_name": "",
+      "email": "",
+      "outreach_template": {
+        "template_name": "Security collaboration",
+        "subject": "Security collaboration at {company}",
+        "body": "Hi {name},\n\nI am reaching out about {role} and {stack} opportunities at {company}. Would a short introduction be useful?\n\nBest regards,\n{sender_name}"
+      }
+    }
+  }
+}
