@@ -2559,14 +2559,6 @@ impl AppState {
                         self.render_sender_profile_card(ui);
                         ui.add_space(12.0);
                         self.render_database_metrics_card(ui);
-                        ui.add_space(12.0);
-                        ui.horizontal(|ui| {
-                            render_kbd(ui, "Ctrl");
-                            ui.add_space(2.0);
-                            render_kbd(ui, "1…5");
-                            ui.add_space(5.0);
-                            ui.label(RichText::new("switch tabs").small().color(TEXT_FAINT));
-                        });
                     });
                 });
         }
@@ -2692,10 +2684,8 @@ impl AppState {
                         Color32::from_rgb(52, 211, 153),
                     );
                     ui.label(RichText::new("SENDER").small().color(TEXT_FAINT).strong());
-                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        self.persona_menu(ui);
-                    });
                 });
+                self.persona_menu(ui);
                 ui.add_space(4.0);
                 ui.label(
                     RichText::new(display_name)
@@ -3312,104 +3302,124 @@ impl AppState {
                 }
             });
             ui.add_space(10.0);
-            ui.horizontal_wrapped(|ui| {
-                ui.label(RichText::new("Niche presets:").small().color(TEXT_FAINT));
-                for (label, niche) in [
-                    ("IT & Dev", "it компании разработка софта"),
-                    ("HoReCa", "рестораны кафе банкетные залы"),
-                    ("Factories", "производственные предприятия заводы"),
-                    ("Agency", "digital агентство реклама"),
-                ] {
-                    let active = self.filter.stack == niche;
-                    if render_filter_chip(ui, active, label, &format!("Fill niche: {niche}"))
-                        .clicked()
-                    {
-                        self.filter.stack = niche.to_string();
-                        self.all_industries = false;
-                        self.show_toast(format!("Applied niche: {label}"), true);
-                    }
-                }
-            });
-            ui.add_space(4.0);
-            ui.horizontal_wrapped(|ui| {
-                ui.label(RichText::new("Target ICP:").small().color(TEXT_FAINT));
-                for (label, role_query, role_kind) in [
-                    (
-                        "CEO / Founder",
-                        "генеральный директор основатель",
-                        "decision_makers",
-                    ),
-                    (
-                        "CTO / Tech Lead",
-                        "технический директор cto тимлид",
-                        "decision_makers",
-                    ),
-                    (
-                        "Head of Sales",
-                        "коммерческий директор руководитель продаж",
-                        "decision_makers",
-                    ),
-                    ("HRD / Talent", "директор по персоналу hr тим", "hr"),
-                ] {
-                    let active = self.filter.role_filter == role_kind
-                        && self.filter.stack.contains(role_query);
-                    if render_filter_chip(ui, active, label, &format!("Target role: {label}"))
-                        .clicked()
-                    {
-                        self.filter.role_filter = role_kind.to_string();
-                        if self.filter.stack.is_empty() || self.all_industries {
-                            self.filter.stack = role_query.to_string();
-                            self.all_industries = false;
-                        } else if !self.filter.stack.contains(role_query) {
-                            self.filter.stack = format!("{} {}", self.filter.stack, role_query);
+            egui::CollapsingHeader::new("Quick presets")
+                .default_open(false)
+                .show(ui, |ui| {
+                    ui.horizontal_wrapped(|ui| {
+                        ui.label(RichText::new("Categories:").small().color(TEXT_FAINT));
+                        for (label, niche) in [
+                            ("IT & Dev", "it компании разработка софта"),
+                            ("HoReCa", "рестораны кафе банкетные залы"),
+                            ("Factories", "производственные предприятия заводы"),
+                            ("Agency", "digital агентство реклама"),
+                        ] {
+                            let active = self.filter.stack == niche;
+                            if render_filter_chip(
+                                ui,
+                                active,
+                                label,
+                                &format!("Fill niche: {niche}"),
+                            )
+                            .clicked()
+                            {
+                                self.filter.stack = niche.to_string();
+                                self.all_industries = false;
+                                self.show_toast(format!("Applied niche: {label}"), true);
+                            }
                         }
-                        self.show_toast(format!("Applied ICP: {label}"), true);
-                    }
-                }
-            });
-            ui.add_space(4.0);
-            ui.horizontal_wrapped(|ui| {
-                ui.label(RichText::new("Saved dorks:").small().color(TEXT_FAINT));
-                for (label, query, city, role) in [
-                    (
-                        "SaaS Founders",
-                        "saas b2b cloud platform",
-                        "",
-                        "decision_makers",
-                    ),
-                    (
-                        "Fintech CTO",
-                        "fintech payment banking",
-                        "",
-                        "decision_makers",
-                    ),
-                    (
-                        "HoReCa Krasnoyarsk",
-                        "ресторан кафе бар horeca",
-                        "Krasnoyarsk",
-                        "decision_makers",
-                    ),
-                    (
-                        "E-com Directors",
-                        "интернет-магазин ecommerce ритейл",
-                        "",
-                        "decision_makers",
-                    ),
-                ] {
-                    let active = self.filter.stack == query;
-                    if render_filter_chip(ui, active, label, &format!("Load saved dork: {label}"))
-                        .clicked()
-                    {
-                        self.filter.stack = query.to_string();
-                        if !city.is_empty() {
-                            self.filter.city = city.to_string();
+                    });
+                    ui.add_space(4.0);
+                    ui.horizontal_wrapped(|ui| {
+                        ui.label(RichText::new("Roles:").small().color(TEXT_FAINT));
+                        for (label, role_query, role_kind) in [
+                            (
+                                "CEO / Founder",
+                                "генеральный директор основатель",
+                                "decision_makers",
+                            ),
+                            (
+                                "CTO / Tech Lead",
+                                "технический директор cto тимлид",
+                                "decision_makers",
+                            ),
+                            (
+                                "Head of Sales",
+                                "коммерческий директор руководитель продаж",
+                                "decision_makers",
+                            ),
+                            ("HRD / Talent", "директор по персоналу hr тим", "hr"),
+                        ] {
+                            let active = self.filter.role_filter == role_kind
+                                && self.filter.stack.contains(role_query);
+                            if render_filter_chip(
+                                ui,
+                                active,
+                                label,
+                                &format!("Target role: {label}"),
+                            )
+                            .clicked()
+                            {
+                                self.filter.role_filter = role_kind.to_string();
+                                if self.filter.stack.is_empty() || self.all_industries {
+                                    self.filter.stack = role_query.to_string();
+                                    self.all_industries = false;
+                                } else if !self.filter.stack.contains(role_query) {
+                                    self.filter.stack =
+                                        format!("{} {}", self.filter.stack, role_query);
+                                }
+                                self.show_toast(format!("Applied ICP: {label}"), true);
+                            }
                         }
-                        self.filter.role_filter = role.to_string();
-                        self.all_industries = false;
-                        self.show_toast(format!("Applied saved dork: {label}"), true);
-                    }
-                }
-            });
+                    });
+                    ui.add_space(4.0);
+                    ui.horizontal_wrapped(|ui| {
+                        ui.label(RichText::new("Saved searches:").small().color(TEXT_FAINT));
+                        for (label, query, city, role) in [
+                            (
+                                "SaaS Founders",
+                                "saas b2b cloud platform",
+                                "",
+                                "decision_makers",
+                            ),
+                            (
+                                "Fintech CTO",
+                                "fintech payment banking",
+                                "",
+                                "decision_makers",
+                            ),
+                            (
+                                "HoReCa Krasnoyarsk",
+                                "ресторан кафе бар horeca",
+                                "Krasnoyarsk",
+                                "decision_makers",
+                            ),
+                            (
+                                "E-com Directors",
+                                "интернет-магазин ecommerce ритейл",
+                                "",
+                                "decision_makers",
+                            ),
+                        ] {
+                            let active = self.filter.stack == query;
+                            if render_filter_chip(
+                                ui,
+                                active,
+                                label,
+                                &format!("Load saved dork: {label}"),
+                            )
+                            .clicked()
+                            {
+                                self.filter.stack = query.to_string();
+                                if !city.is_empty() {
+                                    self.filter.city = city.to_string();
+                                }
+                                self.filter.role_filter = role.to_string();
+                                self.all_industries = false;
+                                self.show_toast(format!("Applied saved dork: {label}"), true);
+                            }
+                        }
+                    });
+                });
             ui.add_space(6.0);
             ui.label(
                 RichText::new("Business or service")
@@ -3532,42 +3542,29 @@ impl AppState {
                 .size(15.0)
                 .color(Color32::WHITE),
             );
-            ui.add_space(14.0);
+            ui.add_space(8.0);
             if self.automatic_business_collection {
-                for (step, title, primary_desc, secondary_desc) in [
-                    (
-                        "01",
-                        "Search sources",
-                        "OpenStreetMap, then Brave Search (fallback: DuckDuckGo, Yahoo, Mwmbl)",
-                        "Multi-pass discovery skips generic directories & aggregators.",
-                    ),
-                    (
-                        "02",
-                        "Crawler & extraction",
-                        "12 parallel workers with a 30s per-site budget.",
-                        "Extracts direct business emails, phones, Telegram, VK and team members.",
-                    ),
+                for (step, title, description) in [
+                    ("01", "Find businesses", "OpenStreetMap and web search."),
+                    ("02", "Collect contacts", "Public business contact details."),
                     (
                         "03",
-                        "Deduplication",
-                        "Automatic clustering by domain, email, phone & tax ID (INN).",
-                        "Consolidates duplicate entity records across sources.",
+                        "Merge duplicates",
+                        "Match domains, emails and phones.",
                     ),
+                    ("04", "Check email domains", "Optional MX lookup."),
                 ] {
                     ui.horizontal(|ui| {
-                        ui.label(RichText::new(step).monospace().size(11.0).color(TEXT_FAINT));
-                        ui.label(RichText::new(title).strong().color(Color32::WHITE));
+                        ui.label(RichText::new(step).monospace().color(TEXT_FAINT));
+                        ui.vertical(|ui| {
+                            ui.label(RichText::new(title).strong());
+                            ui.label(RichText::new(description).small().color(TEXT_MUTED));
+                            if step == "04" {
+                                ui.checkbox(&mut self.filter.verify_mx, "Check MX records");
+                            }
+                        });
                     });
-                    ui.add_space(2.0);
-                    ui.add(
-                        egui::Label::new(RichText::new(primary_desc).small().color(TEXT_MUTED))
-                            .wrap(),
-                    );
-                    ui.add(
-                        egui::Label::new(RichText::new(secondary_desc).small().color(TEXT_FAINT))
-                            .wrap(),
-                    );
-                    ui.add_space(10.0);
+                    ui.add_space(6.0);
                 }
             } else {
                 ui.label(
@@ -3596,35 +3593,16 @@ impl AppState {
             ui.add_space(4.0);
             ui.separator();
             ui.add_space(10.0);
-            if self.automatic_business_collection {
-                ui.horizontal(|ui| {
-                    ui.label(RichText::new("04").monospace().size(11.0).color(TEXT_FAINT));
-                    ui.label(
-                        RichText::new("DNS & verification")
-                            .strong()
-                            .color(Color32::WHITE),
-                    );
-                });
-                ui.add_space(2.0);
+            if !self.automatic_business_collection {
+                ui.checkbox(&mut self.filter.verify_mx, "Check email MX records");
             }
-            ui.checkbox(&mut self.filter.verify_mx, "Check email domains (MX)");
-            ui.add(
-                egui::Label::new(
-                    RichText::new("Direct DNS query verifies whether target domain accepts mail.")
-                        .small()
-                        .color(TEXT_MUTED),
-                )
-                .wrap(),
-            );
             if self.automatic_business_collection {
                 ui.add_space(8.0);
                 ui.add(
                     egui::Label::new(
-                        RichText::new(
-                            "● Progress is saved automatically to contacts.json & contacts.csv.",
-                        )
-                        .small()
-                        .color(TEXT_FAINT),
+                        RichText::new("Progress is saved automatically to your contacts.")
+                            .small()
+                            .color(TEXT_FAINT),
                     )
                     .wrap(),
                 );
@@ -5873,12 +5851,16 @@ impl AppState {
                     .button("Shuffle variations")
                     .on_hover_text("Sample random spintax alternatives")
                     .clicked();
-                if ui.button("Check template text").clicked() {
-                    self.run_spam_check();
-                }
-                if ui.button("Generate 3 variants").clicked() {
-                    self.generate_spintax_samples();
-                }
+                ui.menu_button("More tools", |ui| {
+                    if ui.button("Check template text").clicked() {
+                        self.run_spam_check();
+                        ui.close();
+                    }
+                    if ui.button("Generate 3 variants").clicked() {
+                        self.generate_spintax_samples();
+                        ui.close();
+                    }
+                });
                 (refresh, shuffle)
             })
             .inner;
@@ -6038,9 +6020,12 @@ impl AppState {
     }
 
     fn render_template_tab(&mut self, ui: &mut egui::Ui) {
-        egui::ScrollArea::vertical().id_salt("template_workspace_scroll").show(ui, |ui| {
-            workspace_heading(ui, "Email template", "Write once, personalize for each contact. Preview before sending.");
-            ui.horizontal_wrapped(|ui| {
+        workspace_heading(
+            ui,
+            "Email template",
+            "Write once, personalize for each contact. Preview before sending.",
+        );
+        ui.horizontal_wrapped(|ui| {
                 if primary_button(ui, true, "Save template").clicked() {
                     self.save_template();
                 }
@@ -6112,25 +6097,39 @@ Best regards,\n\
                 }
                 ui.label(RichText::new(&self.template.template_name).weak());
             });
-            if let Some((success, message)) = &self.template_notice {
-                let color = if *success { success_color(ui) } else { ui.visuals().error_fg_color };
-                ui.add(egui::Label::new(RichText::new(message).color(color)).wrap());
+        if let Some((success, message)) = &self.template_notice {
+            let color = if *success {
+                success_color(ui)
             } else {
-                ui.add(egui::Label::new(RichText::new("Save keeps the current subject and message on this computer. Load saved restores your last save.").small().weak()).wrap());
-            }
-            ui.add_space(16.0);
+                ui.visuals().error_fg_color
+            };
+            ui.add(egui::Label::new(RichText::new(message).color(color)).wrap());
+        } else {
+            ui.add(egui::Label::new(RichText::new("Save keeps the current subject and message on this computer. Load saved restores your last save.").small().weak()).wrap());
+        }
+        ui.add_space(16.0);
 
-            if ui.available_width() >= 820.0 {
-                ui.columns(2, |columns| {
-                    self.render_template_editor(&mut columns[0]);
-                    self.render_template_preview(&mut columns[1]);
+        let column_height = ui.available_height();
+        if ui.available_width() >= 820.0 {
+            ui.columns(2, |columns| {
+                egui::ScrollArea::vertical()
+                    .id_salt("template_editor_scroll")
+                    .max_height(column_height)
+                    .show(&mut columns[0], |ui| self.render_template_editor(ui));
+                egui::ScrollArea::vertical()
+                    .id_salt("template_preview_scroll")
+                    .max_height(column_height)
+                    .show(&mut columns[1], |ui| self.render_template_preview(ui));
+            });
+        } else {
+            egui::ScrollArea::vertical()
+                .id_salt("template_compact_scroll")
+                .show(ui, |ui| {
+                    self.render_template_editor(ui);
+                    ui.add_space(20.0);
+                    self.render_template_preview(ui);
                 });
-            } else {
-                self.render_template_editor(ui);
-                ui.add_space(20.0);
-                self.render_template_preview(ui);
-            }
-        });
+        }
     }
 
     fn editor_update_preview(&mut self, contact: &ContactRecord, refresh: bool) -> bool {

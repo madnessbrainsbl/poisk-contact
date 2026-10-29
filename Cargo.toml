@@ -1,6 +1,6 @@
 [package]
 name = "poisk_contact"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 default-run = "poisk_contact"
 description = "Native Windows application for public business contact research and outreach"

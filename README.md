@@ -16,6 +16,20 @@ command-line tools. Email outreach is optional and uses your own mail settings.
 | [Build from source](#build-from-source)
 | [FAQ](#frequently-asked-questions)
 
+## Explore the workflow
+
+![PoiskContact illustration of location and industry search with a four-step collection pipeline](docs/images/poisk-contact-search.svg)
+
+![Animated PoiskContact illustration showing search, contact review, email templates, and export](docs/images/poisk-contact-workflow.gif)
+
+These are source-informed product illustrations, not application screenshots or
+recordings. Company names and contact addresses are fictional; the animation
+does not represent a live collection run or measured performance.
+
+[Contact review](docs/images/poisk-contact-contacts.svg)
+| [Email template](docs/images/poisk-contact-template.svg)
+| [Media kit](docs/media-kit.md)
+
 ## What can PoiskContact do?
 
 | Task | Capabilities |
@@ -36,7 +50,7 @@ not establish mailbox ownership or permission to contact someone.
 
 ### Download and run on Windows
 
-1. Download `PoiskContact-0.1.0-windows-x64.zip` from
+1. Download the latest `PoiskContact` Windows x64 ZIP from
    [GitHub Releases](https://github.com/madnessbrainsbl/poisk-contact/releases/latest).
 2. Extract the complete archive into a new folder you can write to.
 3. Run `start.bat` or `poisk_contact.exe` from that folder.
